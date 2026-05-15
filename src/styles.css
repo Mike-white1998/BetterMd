@@ -1,0 +1,1681 @@
+:root {
+  color-scheme: light;
+  
+  /* Foundation Colors */
+  --bg-app: #ffffff;
+  --bg-sidebar: #fafafa;
+  --bg-surface: #ffffff;
+  --bg-hover: #f4f4f5;
+  --bg-active: #f4f4f5;
+  --bg-code: #f8fafc;
+  
+  /* Typography Colors */
+  --text-primary: #09090b;
+  --text-secondary: #71717a;
+  --text-tertiary: #a1a1aa;
+  
+  /* Borders */
+  --border-subtle: #e4e4e7;
+  --border-strong: #d4d4d8;
+  
+  /* Brand / Accents */
+  --accent-base: #18181b;
+  --accent-hover: #27272a;
+  --accent-fg: #ffffff;
+  --accent-soft: rgba(24, 24, 27, 0.04);
+  
+  /* Layout */
+  --sidebar-w: 320px;
+  --toc-w: 260px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-float: 0 10px 40px -10px rgba(0,0,0,0.08);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  
+  --bg-app: #09090b;
+  --bg-sidebar: #09090b;
+  --bg-surface: #09090b;
+  --bg-hover: #27272a;
+  --bg-active: #27272a;
+  --bg-code: #111113;
+  
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-tertiary: #71717a;
+  
+  --border-subtle: #27272a;
+  --border-strong: #3f3f46;
+  
+  --accent-base: #fafafa;
+  --accent-hover: #e4e4e7;
+  --accent-fg: #09090b;
+  --accent-soft: rgba(250, 250, 250, 0.08);
+
+  --shadow-float: 0 20px 40px -10px rgba(0,0,0,0.5);
+}
+
+/* ==========================================================================
+   Reset & Base
+   ========================================================================== */
+* { box-sizing: border-box; }
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg-app);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+input, button, textarea {
+  font: inherit;
+  color: inherit;
+  outline: none;
+}
+
+button {
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+/* 移除所有自定义滚动条样式，恢复浏览器原生默认滚动条以确保绝对稳定可见 */
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   Layout App Shell
+   ========================================================================== */
+.app-layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   Sidebar
+   ========================================================================== */
+.sidebar {
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+}
+
+.sidebar-header {
+  padding: 24px 24px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-icon {
+  width: 32px;
+  height: 32px;
+  background: var(--accent-base);
+  color: var(--accent-fg);
+  border-radius: var(--radius-md);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: -0.5px;
+}
+
+.brand-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+.sidebar-scrollable {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* ==========================================================================
+   The Hero Upload Zone (User Request Focus)
+   ========================================================================== */
+.upload-hero {
+  position: relative;
+  width: 100%;
+  padding: 32px 20px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--bg-app);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.upload-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--accent-base);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.upload-hero:hover {
+  border-color: var(--accent-base);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.upload-hero:hover::before {
+  opacity: 0.02;
+}
+
+.upload-hero.dragging {
+  border-color: var(--accent-base);
+  background: var(--accent-soft);
+  transform: scale(1.02);
+}
+
+.upload-icon-wrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  display: grid;
+  place-items: center;
+  color: var(--accent-base);
+}
+
+.upload-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.upload-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   Sidebar Sections
+   ========================================================================== */
+.section-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 12px 0;
+}
+
+/* File List */
+.file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  transition: all 0.15s;
+  group: true;
+}
+
+.file-item:hover {
+  background: var(--bg-hover);
+}
+
+.file-item.active {
+  background: var(--bg-active);
+}
+
+.file-item-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.file-item-icon {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.file-item.active .file-item-icon {
+  color: var(--text-primary);
+}
+
+.file-item-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.file-item-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-item-source {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.delete-btn {
+  color: var(--text-tertiary);
+  opacity: 0;
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  transition: all 0.15s;
+}
+
+.file-item:hover .delete-btn {
+  opacity: 1;
+}
+
+.delete-btn:hover {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* Inputs & Forms */
+.input-group {
+  display: flex;
+  background: var(--bg-app);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 4px;
+  transition: border-color 0.2s;
+}
+
+.input-group:focus-within {
+  border-color: var(--border-strong);
+}
+
+.sleek-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 8px 10px;
+  font-size: 13px;
+  min-width: 0;
+}
+
+.sleek-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.icon-btn {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.icon-btn:hover:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.icon-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.icon-btn-primary {
+  background: var(--accent-base);
+  color: var(--accent-fg);
+}
+
+.icon-btn-primary:hover:not(:disabled) {
+  background: var(--accent-base);
+  color: var(--accent-fg);
+  opacity: 0.9;
+}
+
+.title-edit-input {
+  flex: 1;
+  min-width: 0;
+  max-width: 520px;
+  margin-right: 16px;
+  font-size: 15px;
+  font-weight: 600;
+  background: var(--bg-hover);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 6px 12px;
+  height: 32px;
+  color: var(--text-primary);
+  transition: border-color 0.15s;
+}
+
+.title-edit-input:focus {
+  outline: none;
+  border-color: var(--accent-base);
+}
+
+.markdown-editor {
+  width: 100%;
+  min-height: calc(100vh - 280px);
+  background: var(--bg-app);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+  color: var(--text-primary);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  line-height: 1.75;
+  resize: vertical;
+  transition: border-color 0.15s;
+}
+
+.markdown-editor:focus {
+  outline: none;
+  border-color: var(--accent-base);
+}
+
+.paste-area {
+  width: 100%;
+  min-height: 120px;
+  background: var(--bg-app);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 13px;
+  resize: vertical;
+  transition: border-color 0.2s;
+  line-height: 1.6;
+}
+
+.paste-area:focus {
+  border-color: var(--border-strong);
+}
+
+.btn-primary {
+  width: 100%;
+  background: var(--accent-base);
+  color: var(--accent-fg);
+  border-radius: var(--radius-md);
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+  transition: opacity 0.2s;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+/* ==========================================================================
+   Main Content Area
+   ========================================================================== */
+.main-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+  overflow: hidden; /* Fix: 禁止外层滚动，保持 topbar 固定 */
+}
+
+.content-area {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  position: relative;
+}
+
+.topbar {
+  height: 64px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: color-mix(in srgb, var(--bg-app) 78%, transparent);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 20;
+}
+
+.topbar-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  background: var(--bg-hover);
+  border-radius: 20px;
+  padding: 0 12px;
+  height: 32px;
+  margin-right: 8px;
+  transition: width 0.2s;
+}
+
+.search-box input {
+  background: transparent;
+  border: none;
+  width: 140px;
+  font-size: 13px;
+  padding-left: 8px;
+  transition: width 0.2s;
+}
+
+.search-box:focus-within input {
+  width: 180px;
+}
+
+.search-hit-count {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin-left: 8px;
+  border-left: 1px solid var(--border-strong);
+  padding-left: 8px;
+}
+
+.action-divider {
+  width: 1px;
+  height: 16px;
+  background: var(--border-strong);
+  margin: 0 4px;
+}
+
+/* ==========================================================================
+   Editor / Reader Body
+   ========================================================================== */
+.reader-container {
+  flex: 1;
+  display: flex;
+  position: relative;
+  height: 100%;
+  min-height: 0;
+  overflow-y: auto; 
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+.reader-content {
+  flex: 1;
+  min-width: 0;
+  padding: 48px 64px 120px;
+  display: flex;
+  justify-content: center;
+}
+
+.markdown-wrapper {
+  width: 100%;
+  transition: max-width 0.3s ease;
+}
+
+.markdown-wrapper.width-narrow { max-width: 680px; }
+.markdown-wrapper.width-wide   { max-width: 1080px; }
+
+/* Notion/GitHub hybrid typography */
+.markdown-body {
+  line-height: 1.75;
+  word-wrap: break-word;
+  color: var(--text-primary);
+  animation: fadeSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.markdown-body > *:first-child { margin-top: 0 !important; }
+.markdown-body > *:last-child { margin-bottom: 0 !important; }
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  font-weight: 600;
+  line-height: 1.25;
+  margin-top: 2em;
+  margin-bottom: 1em;
+  letter-spacing: -0.02em;
+  scroll-margin-top: 24px; /* Give a little breathing room when scrolling into view */
+}
+
+.markdown-body h1 { font-size: 2.25em; margin-top: 1em; }
+.markdown-body h2 { font-size: 1.75em; padding-bottom: 0.3em; border-bottom: 1px solid var(--border-subtle); }
+.markdown-body h3 { font-size: 1.35em; }
+.markdown-body h4 { font-size: 1.15em; }
+
+.markdown-body p,
+.markdown-body blockquote,
+.markdown-body ul,
+.markdown-body ol,
+.markdown-body dl,
+.markdown-body table,
+.markdown-body pre,
+.markdown-body details {
+  margin-top: 0;
+  margin-bottom: 1.2em;
+}
+
+.markdown-body a {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.markdown-body a:hover {
+  text-decoration: underline;
+}
+
+:root[data-theme='dark'] .markdown-body a {
+  color: #60a5fa;
+}
+
+.markdown-body blockquote {
+  padding: 0.5em 1em;
+  color: var(--text-secondary);
+  border-left: 3px solid var(--border-strong);
+  background: transparent;
+}
+
+.markdown-body code {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 0.85em;
+  background-color: var(--bg-hover);
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+}
+
+.markdown-body pre {
+  background-color: var(--bg-code);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  overflow: auto;
+}
+
+.markdown-body pre code {
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+  font-size: 0.9em;
+  color: inherit;
+}
+
+.markdown-body table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  margin-bottom: 24px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+}
+
+.markdown-body th,
+.markdown-body td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  border-right: 1px solid var(--border-subtle);
+  text-align: left;
+}
+
+.markdown-body th:last-child,
+.markdown-body td:last-child {
+  border-right: none;
+}
+
+.markdown-body tr:last-child td {
+  border-bottom: none;
+}
+
+.markdown-body th {
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--bg-sidebar);
+}
+
+.markdown-body img {
+  max-width: 100%;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+}
+
+.markdown-body hr {
+  height: 1px;
+  background-color: var(--border-subtle);
+  border: none;
+  margin: 2em 0;
+}
+
+.search-hit {
+  background-color: rgba(250, 204, 21, 0.4);
+  color: inherit;
+  border-radius: 2px;
+  padding: 0 2px;
+  transition: all 0.2s;
+}
+
+.search-hit.active {
+  background-color: #f59e0b;
+  color: #fff;
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.4);
+}
+
+/* ==========================================================================
+   TOC Side Panel
+   ========================================================================== */
+.toc-sidebar {
+  width: var(--toc-w);
+  flex-shrink: 0;
+  border-left: 1px solid var(--border-subtle);
+  background: var(--bg-app);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  height: 100%;
+}
+
+.toc-header {
+  padding: 24px 24px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toc-count {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-tertiary);
+}
+
+.toc-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.toc-item {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 13px;
+  line-height: 1.4;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: all 0.15s;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-left: 2px solid transparent;
+}
+
+.toc-item:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+.toc-item.active {
+  color: var(--accent-base);
+  font-weight: 500;
+  background: var(--accent-soft);
+  border-left-color: var(--accent-base);
+}
+
+.toc-item.level-2 { margin-left: 12px; }
+.toc-item.level-3 { margin-left: 24px; font-size: 12px; }
+
+/* Empty States */
+.empty-illustration {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-tertiary);
+  text-align: center;
+}
+
+.empty-illustration svg {
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-illustration h3 {
+  font-size: 18px;
+  color: var(--text-primary);
+  margin: 0 0 8px;
+}
+
+/* Toast */
+.toast-float {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent-base);
+  color: var(--accent-fg);
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: var(--shadow-float);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 50;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translate(-50%, 16px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .toc-sidebar { display: none; }
+}
+
+@media (max-width: 768px) {
+  .app-layout { flex-direction: column; }
+  .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border-subtle); max-height: 40vh; }
+  .reader-content { padding: 24px; }
+}
+
+/* ==========================================================================
+   Tech / Futuristic Aesthetic Layer
+   Purely additive. No layout/sizing changes. All overlays use pointer-events:none
+   so existing behavior, hit-testing, and focus states remain identical.
+   ========================================================================== */
+
+:root {
+  --tech-accent: #2563eb;
+  --tech-accent-2: #7c3aed;
+  --tech-cyan: #06b6d4;
+  --tech-glow: rgba(37, 99, 235, 0.32);
+  --tech-glow-soft: rgba(37, 99, 235, 0.14);
+  --tech-edge: rgba(37, 99, 235, 0.22);
+  --tech-grid: rgba(37, 99, 235, 0.045);
+}
+
+:root[data-theme='dark'] {
+  --tech-accent: #38bdf8;
+  --tech-accent-2: #a78bfa;
+  --tech-cyan: #22d3ee;
+  --tech-glow: rgba(56, 189, 248, 0.5);
+  --tech-glow-soft: rgba(56, 189, 248, 0.2);
+  --tech-edge: rgba(56, 189, 248, 0.35);
+  --tech-grid: rgba(56, 189, 248, 0.07);
+}
+
+/* Brand mark — gradient & inner light */
+.brand-icon {
+  background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 55%, #8b5cf6 100%);
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 6px 18px -6px var(--tech-glow),
+    inset 0 0 0 1px rgba(255,255,255,0.20),
+    inset 0 -8px 16px -8px rgba(0,0,0,0.22);
+}
+.brand-icon::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.22), transparent 60%);
+  pointer-events: none;
+}
+
+/* Sidebar header — live status indicator */
+.sidebar-header { position: relative; }
+.sidebar-header::after {
+  content: "";
+  position: absolute;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.16), 0 0 10px rgba(34, 197, 94, 0.7);
+  animation: techPulse 2.4s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes techPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* Sidebar right edge — subtle vertical light */
+.sidebar { position: relative; }
+.sidebar::after {
+  content: "";
+  position: absolute;
+  inset: 0 -1px 0 auto;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, var(--tech-edge) 22%, var(--tech-edge) 78%, transparent);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* Section title — leading accent bar */
+.section-title { display: flex; align-items: center; gap: 8px; }
+.section-title::before {
+  content: "";
+  width: 12px;
+  height: 1px;
+  flex-shrink: 0;
+  background: linear-gradient(90deg, var(--tech-accent), transparent);
+}
+
+/* Upload hero — tech glow on hover/drag */
+.upload-hero {
+  transition:
+    transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.2s,
+    background 0.2s,
+    box-shadow 0.25s;
+}
+.upload-hero:hover {
+  border-color: var(--tech-accent);
+  box-shadow:
+    0 0 0 1px var(--tech-edge),
+    0 12px 32px -10px var(--tech-glow),
+    inset 0 0 24px -10px var(--tech-glow-soft);
+}
+.upload-hero.dragging {
+  border-color: var(--tech-accent);
+  background: var(--tech-glow-soft);
+  box-shadow:
+    0 0 0 1px var(--tech-accent),
+    0 0 36px -4px var(--tech-glow);
+}
+
+/* Upload icon — gradient halo */
+.upload-icon-wrapper {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.10), rgba(124, 58, 237, 0.10));
+  color: var(--tech-accent);
+  box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.18);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+:root[data-theme='dark'] .upload-icon-wrapper {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.18), rgba(167, 139, 250, 0.18));
+  box-shadow: inset 0 0 0 1px rgba(56, 189, 248, 0.3), 0 0 18px -6px var(--tech-glow);
+}
+.upload-hero:hover .upload-icon-wrapper {
+  transform: translateY(-1px) scale(1.04);
+  box-shadow: inset 0 0 0 1px var(--tech-accent), 0 0 20px -4px var(--tech-glow);
+}
+
+/* File list active — neon left edge & soft gradient wash */
+.file-item { position: relative; }
+.file-item.active {
+  background:
+    linear-gradient(90deg, var(--tech-glow-soft), transparent 70%),
+    var(--bg-active);
+}
+.file-item.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--tech-accent), var(--tech-accent-2));
+  box-shadow: 0 0 10px var(--tech-glow);
+  pointer-events: none;
+}
+
+/* Input group / paste area focus glow */
+.input-group {
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.input-group:focus-within {
+  border-color: var(--tech-accent);
+  box-shadow: 0 0 0 3px var(--tech-glow-soft), 0 0 16px -6px var(--tech-glow);
+}
+.paste-area {
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.paste-area:focus {
+  border-color: var(--tech-accent);
+  box-shadow: 0 0 0 3px var(--tech-glow-soft);
+}
+
+/* Primary button — gradient & shimmer */
+.btn-primary {
+  background: linear-gradient(135deg, var(--tech-accent), var(--tech-accent-2));
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 6px 16px -6px var(--tech-glow);
+  transition: box-shadow 0.25s, transform 0.2s;
+}
+.btn-primary::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 35%, rgba(255, 255, 255, 0.28) 50%, transparent 65%);
+  transform: translateX(-100%);
+  transition: transform 0.7s ease;
+  pointer-events: none;
+}
+.btn-primary:hover {
+  opacity: 1;
+  box-shadow: 0 10px 24px -6px var(--tech-glow);
+}
+.btn-primary:hover::before { transform: translateX(100%); }
+.btn-primary:active { transform: translateY(1px); }
+
+/* Topbar — accent scanline at bottom edge */
+.topbar { position: relative; }
+.topbar::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent,
+    var(--tech-edge) 18%,
+    var(--tech-accent) 50%,
+    var(--tech-edge) 82%,
+    transparent
+  );
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* Search box — focus halo */
+.search-box {
+  transition: box-shadow 0.2s ease, background 0.2s ease, width 0.2s;
+}
+.search-box:focus-within {
+  background: var(--bg-app);
+  box-shadow: 0 0 0 1px var(--tech-edge), 0 0 0 4px var(--tech-glow-soft), 0 0 14px -4px var(--tech-glow);
+}
+
+/* Icon button — hover glow */
+.icon-btn {
+  transition: background 0.15s, color 0.15s, box-shadow 0.2s;
+}
+.icon-btn:hover:not(:disabled) {
+  box-shadow: 0 0 0 1px var(--tech-edge), 0 0 14px -4px var(--tech-glow);
+}
+
+/* TOC active item — enhanced glow */
+.toc-item.active {
+  background: linear-gradient(90deg, var(--tech-glow-soft), transparent 75%), var(--accent-soft);
+  border-left-color: var(--tech-accent);
+  box-shadow: -1px 0 12px -3px var(--tech-glow);
+  color: var(--tech-accent);
+}
+:root[data-theme='dark'] .toc-item.active { color: var(--tech-accent); }
+
+/* Toast — tech border glow */
+.toast-float {
+  border: 1px solid var(--tech-edge);
+  box-shadow:
+    0 14px 40px -10px rgba(0, 0, 0, 0.32),
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 0 24px -4px var(--tech-glow);
+}
+
+/* Empty state — soft tech halo around icon */
+.empty-illustration svg {
+  filter: drop-shadow(0 0 32px var(--tech-glow-soft));
+}
+
+/* Search hit active — keep amber but add glow ring */
+.search-hit.active {
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.55), 0 0 12px rgba(245, 158, 11, 0.5);
+}
+
+/* Code block — subtle accent border in dark mode */
+:root[data-theme='dark'] .markdown-body pre {
+  border-color: rgba(56, 189, 248, 0.14);
+  box-shadow:
+    inset 2px 0 0 var(--tech-accent),
+    inset 0 0 0 1px rgba(56, 189, 248, 0.04);
+}
+
+/* Mermaid container — gentle tech frame */
+.mermaid-shell {
+  position: relative;
+  border-radius: var(--radius-md);
+  padding: 4px;
+  background: linear-gradient(135deg, var(--tech-glow-soft), transparent 70%);
+}
+
+/* Blockquote — left accent line with gradient & glow */
+.markdown-body blockquote {
+  position: relative;
+  border-left: none;
+  padding-left: 1.2em;
+}
+.markdown-body blockquote::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.1em;
+  bottom: 0.1em;
+  width: 3px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--tech-accent), var(--tech-accent-2));
+  box-shadow: 0 0 8px -1px var(--tech-glow);
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   Tech Layer · Level 2 — Refined Details
+   Still purely additive. All overlays pointer-events:none. No layout changes.
+   ========================================================================== */
+
+/* Selection — branded highlight color */
+::selection {
+  background: var(--tech-accent);
+  color: #ffffff;
+  text-shadow: none;
+}
+:root[data-theme='dark'] ::selection {
+  background: var(--tech-accent);
+  color: #0b1220;
+}
+
+/* Topbar — soft ambient highlight & subtle grid pattern overlay */
+.topbar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--tech-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--tech-grid) 1px, transparent 1px),
+    radial-gradient(ellipse 60% 100% at 50% 100%, var(--tech-glow-soft), transparent 70%);
+  background-size: 28px 28px, 28px 28px, 100% 100%;
+  -webkit-mask-image: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.65) 60%, rgba(0, 0, 0, 0.85));
+  mask-image: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.65) 60%, rgba(0, 0, 0, 0.85));
+  opacity: 0.85;
+  z-index: 0;
+}
+.topbar > * { position: relative; z-index: 1; }
+
+/* Reader container — ambient gradient blobs */
+.reader-container {
+  background:
+    radial-gradient(ellipse 50% 35% at 20% 0%, var(--tech-glow-soft), transparent 60%),
+    radial-gradient(ellipse 40% 30% at 85% 100%, rgba(124, 58, 237, 0.07), transparent 60%);
+}
+:root[data-theme='dark'] .reader-container {
+  background:
+    radial-gradient(ellipse 50% 35% at 20% 0%, rgba(56, 189, 248, 0.10), transparent 60%),
+    radial-gradient(ellipse 40% 30% at 85% 100%, rgba(167, 139, 250, 0.08), transparent 60%);
+}
+
+/* Upload hero — subtle scanline sweep on hover */
+.upload-hero {
+  position: relative;
+}
+.upload-hero > .scan-overlay { display: none; } /* reserve hook, unused */
+.upload-hero:hover .upload-icon-wrapper::after,
+.upload-hero.dragging .upload-icon-wrapper::after {
+  opacity: 1;
+}
+.upload-icon-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+.upload-icon-wrapper::after {
+  content: "";
+  position: absolute;
+  left: -50%;
+  top: 0;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.45) 50%, transparent 60%);
+  transform: translateX(-100%);
+  transition: transform 0.9s ease, opacity 0.3s;
+  opacity: 0;
+  pointer-events: none;
+}
+.upload-hero:hover .upload-icon-wrapper::after {
+  transform: translateX(100%);
+}
+
+/* List markers — tech accent for ul/ol bullets */
+.markdown-body ul > li::marker,
+.markdown-body ol > li::marker {
+  color: var(--tech-accent);
+  font-weight: 600;
+}
+
+/* Heading h2 — replace plain border-bottom with tech gradient underline */
+.markdown-body h2 {
+  position: relative;
+  border-bottom: none;
+}
+.markdown-body h2::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--tech-accent), var(--tech-edge) 30%, transparent 85%);
+  pointer-events: none;
+}
+
+/* Heading h3 — small leading accent dot */
+.markdown-body h3 {
+  position: relative;
+  padding-left: 0.55em;
+}
+.markdown-body h3::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 3px;
+  height: 0.85em;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--tech-accent), var(--tech-accent-2));
+  box-shadow: 0 0 6px var(--tech-glow-soft);
+  pointer-events: none;
+}
+
+/* Table header — gradient accent background */
+.markdown-body th {
+  background:
+    linear-gradient(180deg, var(--tech-glow-soft), transparent),
+    var(--bg-sidebar);
+  position: relative;
+}
+.markdown-body thead tr {
+  position: relative;
+}
+.markdown-body table::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  top: 0;
+  background: linear-gradient(90deg, transparent, var(--tech-accent) 20%, var(--tech-accent-2) 50%, var(--tech-accent) 80%, transparent);
+  pointer-events: none;
+  opacity: 0.55;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+.markdown-body table {
+  position: relative;
+}
+
+/* Inline code — tech-tinted background in dark mode */
+:root[data-theme='dark'] .markdown-body :not(pre) > code {
+  background-color: rgba(56, 189, 248, 0.08);
+  color: #e0f2fe;
+  box-shadow: inset 0 0 0 1px rgba(56, 189, 248, 0.18);
+}
+.markdown-body :not(pre) > code {
+  box-shadow: inset 0 0 0 1px var(--border-subtle);
+}
+
+/* Pre block — leading accent edge (inset shadow so it doesn't scroll with content) */
+.markdown-body pre {
+  box-shadow: inset 2px 0 0 var(--tech-edge);
+}
+
+/* Empty illustration — pulsing halo & corner brackets */
+.empty-illustration {
+  position: relative;
+}
+.empty-illustration svg {
+  animation: techIconBreathe 3.5s ease-in-out infinite;
+}
+@keyframes techIconBreathe {
+  0%, 100% {
+    filter: drop-shadow(0 0 16px var(--tech-glow-soft));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 40px var(--tech-glow));
+    transform: scale(1.04);
+  }
+}
+
+/* Action divider — gradient instead of solid */
+.action-divider {
+  background: linear-gradient(180deg, transparent, var(--border-strong) 25%, var(--border-strong) 75%, transparent);
+}
+
+/* Search hit count — soft tech tint */
+.search-hit-count {
+  color: var(--text-secondary);
+  border-left-color: var(--border-strong);
+}
+
+/* TOC count badge — pill style */
+.toc-count {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--tech-glow-soft);
+  color: var(--tech-accent);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.3px;
+  box-shadow: inset 0 0 0 1px var(--tech-edge);
+}
+
+/* TOC list — soft fade at edges */
+.toc-list { position: relative; }
+
+/* Mermaid frame — refined */
+.mermaid-shell {
+  background:
+    linear-gradient(135deg, var(--tech-glow-soft), transparent 60%),
+    linear-gradient(var(--bg-app), var(--bg-app)) padding-box;
+  box-shadow: 0 0 0 1px var(--tech-edge), 0 8px 28px -12px var(--tech-glow);
+}
+
+/* Sidebar header — corner bracket decoration on top */
+.sidebar-header {
+  /* keep existing ::after status dot; we add corner bracket via box-shadow trick on brand-icon parent */
+}
+
+/* Sidebar — soft top fade so brand area feels lifted */
+.sidebar::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 80px;
+  background: radial-gradient(ellipse 80% 100% at 30% 0%, var(--tech-glow-soft), transparent 70%);
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+/* Sidebar scrollable content sits above the glow */
+.sidebar > * { position: relative; }
+
+/* File item — micro-interaction lift on hover */
+.file-item {
+  transition: background 0.15s, transform 0.15s ease;
+}
+.file-item:hover { transform: translateX(2px); }
+.file-item.active { transform: translateX(0); }
+
+/* Toc item — micro-interaction */
+.toc-item {
+  transition: color 0.15s, background 0.15s, transform 0.15s ease, border-left-color 0.15s, box-shadow 0.2s;
+}
+.toc-item:hover { transform: translateX(2px); }
+.toc-item.active { transform: translateX(0); }
+
+/* Markdown body — subtle reading aid: first-line hint on h1 */
+.markdown-body h1 {
+  position: relative;
+}
+.markdown-body h1::before {
+  content: "";
+  position: absolute;
+  left: -14px;
+  top: 0.25em;
+  bottom: 0.25em;
+  width: 3px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--tech-accent), var(--tech-accent-2));
+  box-shadow: 0 0 12px var(--tech-glow);
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+/* Markdown links — animated bottom gradient underline */
+.markdown-body p a,
+.markdown-body li a,
+.markdown-body td a {
+  background-image: linear-gradient(90deg, var(--tech-accent), var(--tech-accent-2));
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.3s ease;
+}
+.markdown-body p a:hover,
+.markdown-body li a:hover,
+.markdown-body td a:hover {
+  text-decoration: none;
+  background-size: 100% 1px;
+}
+
+/* Horizontal rule — gradient accent */
+.markdown-body hr {
+  background: linear-gradient(90deg, transparent, var(--tech-edge) 20%, var(--tech-accent) 50%, var(--tech-edge) 80%, transparent);
+  height: 1px;
+  border: none;
+  opacity: 0.7;
+}
+
+/* Detail summary — subtle accent on open */
+.markdown-body details {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 8px 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.markdown-body details[open] {
+  border-color: var(--tech-edge);
+  box-shadow: 0 0 0 1px var(--tech-glow-soft), 0 6px 18px -10px var(--tech-glow);
+}
+.markdown-body summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.markdown-body summary::marker {
+  color: var(--tech-accent);
+}
+
+/* Reader content top — ambient overhead light */
+.reader-content {
+  position: relative;
+}
+.reader-content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(640px, 80%);
+  height: 180px;
+  background: radial-gradient(ellipse 50% 100% at 50% 0%, var(--tech-glow-soft), transparent 70%);
+  pointer-events: none;
+  opacity: 0.6;
+}
+:root[data-theme='dark'] .reader-content::before {
+  opacity: 0.8;
+}
+
+/* ==========================================================================
+   Tech Layer · Level 3 — Polish & Refinement
+   Subtractive in spirit: quiet the noise, tighten the type, add hairline
+   scrollbars and accent caret. No layout shifts.
+   ========================================================================== */
+
+/* Hairline scrollbar — present but discreet, accent on hover */
+:root {
+  --scrollbar-thumb: rgba(9, 9, 11, 0.16);
+  --scrollbar-thumb-hover: var(--tech-edge);
+}
+:root[data-theme='dark'] {
+  --scrollbar-thumb: rgba(250, 250, 250, 0.12);
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: background-color 0.2s;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scrollbar-thumb-hover);
+}
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Native form control accent — tints search clear button, future checkboxes */
+:root {
+  accent-color: var(--tech-accent);
+}
+
+/* Caret color in inputs/textareas */
+input,
+textarea,
+[contenteditable] {
+  caret-color: var(--tech-accent);
+}
+
+/* Keyboard focus — visible accent ring, hidden for mouse users */
+:focus-visible {
+  outline: 2px solid var(--tech-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+button:focus-visible,
+a:focus-visible {
+  outline-offset: 3px;
+}
+input:focus-visible,
+textarea:focus-visible {
+  outline: none; /* handled by container box-shadow */
+}
+
+/* Typography — OpenType ligatures, contextual alternates */
+body {
+  font-feature-settings: "cv11", "ss01", "ss03", "cv02", "calt";
+  font-variant-ligatures: contextual;
+}
+
+/* Wrap pretty / balance — modern paragraph & heading shaping */
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.empty-illustration h3 {
+  text-wrap: balance;
+}
+.markdown-body p,
+.markdown-body li,
+.upload-desc,
+.upload-title {
+  text-wrap: pretty;
+}
+
+/* Tabular numerals where digits sit in a column / read as data */
+.markdown-body code,
+.markdown-body pre,
+.markdown-body table,
+.search-hit-count,
+.toc-count,
+.file-item-source,
+.translate-progress {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Fallback for browsers without View Transitions support — a wide list of
+   theme-bound surfaces so colors crossfade instead of snapping. */
+html,
+body,
+.sidebar,
+.toc-sidebar,
+.topbar,
+.main-content,
+.content-area,
+.reader-container,
+.input-group,
+.paste-area,
+.sleek-input,
+.search-box,
+.title-edit-input,
+.markdown-editor,
+.brand-icon,
+.section-title,
+.action-divider,
+.upload-desc,
+.upload-title,
+.topbar-title,
+.toc-header,
+.toc-count,
+.file-item-source,
+.markdown-body,
+.markdown-body a,
+.markdown-body blockquote,
+.markdown-body pre,
+.markdown-body code,
+.markdown-body th,
+.markdown-body td,
+.markdown-body tr,
+.markdown-body hr,
+.markdown-body details,
+.markdown-body summary {
+  transition: background-color 0.22s ease, border-color 0.22s ease, color 0.22s ease;
+}
+
+/* View Transitions — gentle, uniform crossfade across the whole viewport.
+   Both layers occupy the same space; old fades out while new fades in,
+   so the entire page transitions in place without any directional sweep. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.45s;
+  animation-timing-function: ease;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) {
+  animation-name: theme-fade-out;
+}
+::view-transition-new(root) {
+  animation-name: theme-fade-in;
+}
+@keyframes theme-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+@keyframes theme-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Mermaid: the SVG is rebuilt on theme change by a deferred effect. Fade the
+   container during the swap so the rebuild looks intentional rather than a
+   flash. (Targeting the container instead of the svg — mermaid replaces the
+   svg element each time, so transitions on it don't survive the swap.) */
+.mermaid {
+  transition: opacity 0.2s ease;
+}
+
+/* Image — subtle elevation on hover, no layout shift */
+.markdown-body img {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s;
+}
+.markdown-body img:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.18), 0 0 0 1px var(--tech-edge);
+}
+
+/* Toast — frosted glass + accent inner stroke */
+.toast-float {
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+/* Sidebar header status dot — softer, less competing with brand */
+.sidebar-header::after {
+  width: 5px;
+  height: 5px;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.12), 0 0 8px rgba(34, 197, 94, 0.55);
+}
+
+/* Topbar title — preserve ellipsis but tighten letter-spacing for refinement */
+.topbar-title {
+  letter-spacing: -0.01em;
+}
+
+/* Reduce motion — respect OS preference, kill remaining infinite animations */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
